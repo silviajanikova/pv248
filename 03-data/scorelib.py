@@ -60,7 +60,6 @@ class Edition(object):
 
 		return self._dict
 
-
 	def __eq__(self, other):
 		return self.get_dict() == other.get_dict()
 
@@ -157,7 +156,6 @@ def parse_composer(data):
 					died = int(year_group.group(2))
 
 		objs.append(Person(composer_group.group(1).strip(), born, died))
-
 	return objs
 
 def parse_editors(data):

@@ -39,7 +39,6 @@ def select(cur, table_name, attribute_name, value):
 
 # imports unique names of authors/editors to db
 def import_person(cur, author):
-	create_task(cur, SQL_PERSON, (author.born, author.died, author.name))
 	# check born/died info
 	if author.born != None:
 		cur.execute("SELECT born FROM person WHERE name = ? ", (author.name,))
@@ -73,6 +72,8 @@ def import_data(conn, obj):
 		for author in composition.authors + edition.authors:
 			if author not in unique_persons:
 				unique_persons.append(author)
+				create_task(cur, SQL_PERSON, (author.born, author.died, author.name))
+			else:
 				import_person(cur, author)
 
 
@@ -113,8 +114,6 @@ def import_data(conn, obj):
 					break
 
 		create_task(cur, SQL_PRINT,(record.print_id, "Y" if record.partiture else "N", edition_id))
-
-
 
 ## ./import.py scorelib.txt scorelib.dat
 sql_file_name = "scorelib.sql"
