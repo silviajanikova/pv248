@@ -42,5 +42,5 @@ if conn != None:
 		composer_dict_c = clear_dict(composer_dict)
 		composer_list.append(composer_dict_c)
 
-	print(composer_dict)
+	# print(composer_dict)
 	print(json.dumps(composer_list,indent=4,ensure_ascii=False))
