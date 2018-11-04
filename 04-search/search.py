@@ -58,19 +58,19 @@ def get_voices(print_id):
 
 	cur.execute(SQL_GET_VOICES, (score_id[0][0],))
 	voices = cur.fetchall()
-	voices_list = list()
+	# voices_list = list()
+	voices_dict = dict()
 
 	for v in voices:
 		voice_dict = dict()
-		voices_dict = dict()
 		voice_dict["name"] = v[2]
 		voice_dict["range"] = v[1]
 		voice_dict_c = clear_dict(voice_dict)
-		voices_dict[v[0]] = voice_dict_c
-		if len(voice_dict_c) != 0:
-			voices_list.append(voices_dict)		
 
-	return voices_list
+		if len(voice_dict_c) != 0:
+			voices_dict[v[0]] = voice_dict_c
+
+	return voices_dict
 
 
 # ./search.py bach
