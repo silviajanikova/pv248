@@ -11,23 +11,53 @@ if len(sys.argv) != 2:
 	print('wrong number of arguments')
 	sys.exit(1)
 
+# open file
 file_name = sys.argv[1]
 wave_file = wave.open(file_name, 'r')
 
-num_frames = wave_file.getnframes()
-raw_data = wave_file.readframes(num_frames)
-
 num_channels = wave_file.getnchannels()
-sample_width = wave_file.getsampwidth()
+num_frames = wave_file.getnframes()
+frame_rate = wave_file.getframerate()
 
-total_samples = num_frames * num_channels
+# length of analyzed window, 1 second
+window = frame_rate
+window_samples = frame_rate * num_channels
+num_window = (num_frames * num_channels) // window_samples
 
-if sample_width == 1: 
-	fmt = "%iB" % total_samples # read unsigned chars
-elif sample_width == 2:
-	fmt = "%ih" % total_samples # read signed 2 byte shorts
+low = None
+high = None
 
-integer_data = struct.unpack(fmt, raw_data)
+for i in range(num_window):
+	data = wave_file.readframes(window)
+	
+	data_int = struct.unpack("%ih" % window * num_channels, data)
 
-print(integer_data)
+	# stereo
+	if(num_channels == 2):
+		channel_1 = (data_int[0::num_channels])
+		channel_2 = (data_int[1::num_channels])
+		data_int = numpy.mean(numpy.array([channel_1, channel_2]), axis=0)
+
+	amplitudes_list = numpy.fft.rfft(numpy.array(data_int))
+	amplitudes_abs_list = numpy.abs(amplitudes_list)
+	amplitudes_avg = numpy.mean(amplitudes_abs_list)
+
+	for f, amp in enumerate(amplitudes_abs_list):
+		if amp >= (20 * amplitudes_avg):
+			if low == None or f < low:
+				low = f
+			if high == None or f > high:
+				high = f
+
+
+if low == None and high == None:
+	print('no peaks')
+else:
+	print("low = {0}, high = {1}".format(low, high))
+
+
+# close file
+wave_file.close()
+
+
 
