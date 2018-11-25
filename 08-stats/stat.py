@@ -42,9 +42,9 @@ for col in header:
 			result[col] = get_stats(data[col])
 		elif mode == "dates":
 			if col_splitted[0] in dates:
-				dates[col_splitted[0]] = dates[col_splitted[0]].append(data[col])
+				dates[col_splitted[0]].append(col)
 			else:
-				dates[col_splitted[0]] = data[col]
+				dates[col_splitted[0]] = [col]
 
 		elif mode == "exercises":
 			if col_splitted[1] in exercises:
@@ -54,7 +54,12 @@ for col in header:
 
 if mode == "dates":		
 	for date, value in dates.items():
-		result[date] = get_stats(value)
+		# result[date] = get_stats(value)
+		if len(value) > 1:
+			data[date] = data[value[0]] + data[value[1]]
+		else: 
+			data[date] = data[value]
+		result[date] = get_stats(data[date])
 elif mode == "exercises":
 	for exercise, value in exercises.items():		
 		data[exercise] = data[value[0]] + data[value[1]]

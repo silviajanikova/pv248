@@ -60,6 +60,7 @@ def get_prediciton(student, header, data):
 	y16 = slope * 16
 	y20 = slope * 20
 
+
 	date16 = semester_begin + timedelta(days=y16)
 	date20 = semester_begin + timedelta(days=y20)
 
