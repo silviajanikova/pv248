@@ -25,9 +25,13 @@ def get_stats(student, prediction):
 
 
 def get_prediciton(student, header, data):
+	semester_begin = datetime.strptime("2018-09-17", "%Y-%m-%d")
 	dates = {}
+	dates["2018-09-17"] = 0
 	points = 0
-	for col in header:
+	header_sorted = sorted(header)
+
+	for col in header_sorted:
 		col_splitted = col.split("/")
 
 		if col != "student":
@@ -41,37 +45,37 @@ def get_prediciton(student, header, data):
 			dates[col_splitted[0]] = points
 	
 	if points == 0:
-		return 0, 'inf', 'inf'
+		return 0, "inf", "inf"
 	
-	semester_begin = datetime.strptime("2018-09-17", "%Y-%m-%d")
-
 	points = list(dates.items())
+	points = [(v[1], (datetime.strptime(v[0], "%Y-%m-%d") - semester_begin).days) for v in points]
 
+	y = np.array([v[0] for v in points])
+	x = np.array([v[1] for v in points])
 
-	points = sorted([(v[1], (datetime.strptime(v[0], "%Y-%m-%d") - semester_begin).days) for v in points], key=lambda x: x[1])
+	# edited
+	# result = stats.linregress(x,y)
 
-	x = [v[0] for v in points]
-	y = [v[1] for v in points]
-
-	result = stats.linregress(x,y)
-	slope = result[0]
+	x = x[:, np.newaxis]
+	slope = np.linalg.lstsq(x, y, rcond=None)[0].item()
 
 	# y = a * x + 0
-	y16 = slope * 16
-	y20 = slope * 20
+	if slope != 0:
+		y16 = 16 / slope
+		y20 = 20 / slope
 
-
-	date16 = semester_begin + timedelta(days=y16)
-	date20 = semester_begin + timedelta(days=y20)
-
+		date16 = semester_begin + timedelta(days=y16)
+		date20 = semester_begin + timedelta(days=y20)
+	else:
+		date16 = "inf"
+		date20 = "inf"
+	
 	return slope, date16.strftime("%Y-%m-%d"), date20.strftime("%Y-%m-%d")
-
 
 
 if len(sys.argv) != 3:
 	print('wrong number of arguments')
 	sys.exit(1)
-
 
 # parse arguments
 file_name = sys.argv[1]
