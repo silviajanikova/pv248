@@ -42,7 +42,8 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
 		try:
 			headers = dict(self.headers)
 			headers['Accept-Encoding'] = 'identity'
-			del headers["Host"]
+			if 'Host' in headers:
+				del headers['Host']
 
 			request = Request(url, 
 				method='GET', 
