@@ -8,7 +8,7 @@ import json
 import http.server
 import socketserver
 from urllib.parse import parse_qs
-import time
+import time 
 
 CODE_OK = 200
 CODE_ERROR = 400
@@ -30,7 +30,7 @@ class TicTacToe(object):
 
 
 	def do_step(self, player, x, y):
-		if self.is_end():
+		if self.is_end(): 
 			return False, 'game already ended'
 
 		if player != int(self.next):
@@ -89,11 +89,11 @@ class CustomHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 			game = self.get_game_by_id(int(game_id))
 			if game.is_end():
 				if game.is_winner(1):
-					self.send_reponse(CODE_OK, {'winner':'1'})
+					self.send_reponse(CODE_OK, {'winner': 1})
 				elif game.is_winner(2):
-					self.send_reponse(CODE_OK, {'winner':'2'})
+					self.send_reponse(CODE_OK, {'winner': 2})
 				elif game.is_draw():
-					self.send_reponse(CODE_OK, {'winner':'0'})
+					self.send_reponse(CODE_OK, {'winner': 0})
 			else:
 				self.send_reponse(CODE_OK, {'board': game.board, 'next': game.next})
 
